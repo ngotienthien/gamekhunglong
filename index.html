@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        #wrapper{
+            width: 800px;
+            min-height: 300px;
+            margin: auto;
+            background: rgb(247, 238, 238);
+        }
+
+        canvas {
+            border:1px solid #d3d3d3;
+            background-color: #f1f1f1;
+        }
+    </style>
+
+
+</head>
+<body onload="startGame()">
+
+    <script>
+        var myDinosaur;
+        var myCactuss = [];
+        var myBirds = [];
+        var myBird;
+        var myGrounds = [];
+        var myClouds = [];
+        var randomCactus = 6;
+        var randomBird = 6;
+        var randomCloud = 4;
+        var myScore = [];
+        var score = 0;
+        var hightScore = [];
+        var vtScore = [655, 665, 675, 685, 695, 705, 715, 725, 735, 745];
+        var gameover = new component(655, 15, 195, 15, 290, 150, 195, 15, 5);
+        
+        function startGame() {
+            myGameArea.start();
+            myDinosaur = new component(846, 0, 46, 50, 50, 245, 46, 50, 1)
+            myCactus = new component(332, 0, 25, 50, 500, 245, 25, 50, 2);
+            myGround = new component(0, 52, 1200, 30, 0, 280, 2400, 30, 3)
+            myCloud = new component(86, 0, 50, 50, 100, 100, 70, 70, 4);
+            myBird = new component(135, 5, 45, 35, 100, 100, 50, 30, 6);
+            createScore();
+            createHightScore();
+        }
+
+        function createScore(){
+            myScore.push(new component(vtScore[0], 0, 10, 15, 640, 0, 10, 15, 5));
+            myScore.push(new component(vtScore[0], 0, 10, 15, 630, 0, 10, 15, 5));
+            myScore.push(new component(vtScore[0], 0, 10, 15, 620, 0, 10, 15, 5));
+            myScore.push(new component(vtScore[0], 0, 10, 15, 610, 0, 10, 15, 5));
+            myScore.push(new component(vtScore[0], 0, 10, 15, 600, 0, 10, 15, 5));
+        }
+
+        function createHightScore(){
+            hightScore.push(new component(vtScore[0], 0, 10, 15, 580, 0, 10, 15, 5));
+            hightScore.push(new component(vtScore[2], 0, 10, 15, 570, 0, 10, 15, 5));
+            hightScore.push(new component(vtScore[4], 0, 10, 15, 560, 0, 10, 15, 5));
+            hightScore.push(new component(vtScore[4], 0, 10, 15, 550, 0, 10, 15, 5));
+            hightScore.push(new component(vtScore[2], 0, 10, 15, 540, 0, 10, 15, 5));
+
+            hightScore.push(new component(755, 0, 20, 15, 500, 0, 20, 15, 5));
+
+        }
+
+        var myGameArea = {
+            canvas : document.createElement("canvas"),
+            start : function() {
+                this.canvas.width = 800;
+                this.canvas.height = 300;
+                this.context = this.canvas.getContext("2d");
+                document.getElementById("wrapper").insertBefore(this.canvas, document.getElementById("wrapper").childNodes[0]);
+                this.frameNo = 0;
+                this.frameCatus = 0;
+                this.frameBird = 0;
+                this.interval = setInterval(updateGameArea, 10);
+                window.addEventListener('keydown', function (e) {
+                    myGameArea.key = e.keyCode;
+                })
+
+                window.addEventListener('keyup', function (e) {
+                    myGameArea.key = false;
+                })
+            },
+            clear : function(){
+                this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            },
+            stop : function(){
+                clearInterval(this.interval);
+            }
+        }
+
+        function everyintervalGround(n){
+            if ((myGameArea.frameNo / n) % 1 == 0)
+            {                
+                return true;
+                
+            }
+                
+
+                return false;
+        }
+
+        function everyintervalCatus(n){
+            if ((myGameArea.frameCatus / n) % 1 == 0)
+            {     
+                myGameArea.frameCatus = 2;           
+                return true;
+                
+            }
+             return false;
+        }
+
+        function everyintervalBird(n){
+            if ((myGameArea.frameBird / n) % 1 == 0)
+            {     
+                myGameArea.frameBird = 2;           
+                return true;
+                
+            }
+             return false;
+        }
+        
+        function component(ximg, yimg, widthimg, heightimg, xcanvas, ycanvas, widthcanvas, heightcanvas, category)
+        {
+            this.ximg = ximg;
+            this.yimg = yimg;
+            this.widthimg = widthimg;
+            this.heightimg = heightimg;
+            this.xcanvas = xcanvas;
+            this.ycanvas = ycanvas;
+            this.widthcanvas = widthcanvas;
+            this.heightcanvas = heightcanvas;
+            this.speedX = 0;
+            this.speedY = 0;
+            this.gravity = 0.2;
+            this.gravitySpeed = 0;
+            this.bounce = 0.2;
+            this.category = category;
+
+            image = document.getElementById("imgmain");
+            this.update = function(){
+                
+                
+                if(this.category == 1 && everyintervalGround(13))
+                {       
+                    if(this.ycanvas == 245 || this.ycanvas == 265) // khi nam va dung
+                    {   
+                        if(myGameArea.frameNo % 2 == 0)
+                            i = 0;
+                        else
+                            i = 1;
+
+                        if(myGameArea.key && myGameArea.key == 40)
+                        {
+                            this.ximg = 935 + 179 + (58 * i);
+                           
+                            this.widthimg = 57;
+                            this.widthcanvas = 57;
+                            
+                            
+                            this.heightimg = 30;
+                            this.heightcanvas = 30;
+                            
+
+                            this.ycanvas = 265;
+                            this.yimg = 20;
+                            
+                            
+                         
+                        }else
+                        {
+                            this.ximg = 935 +(44 * i);
+                            this.yimg = 0;
+                            this.heightimg = 50;
+                            this.widthimg = 46;   
+                            this.widthcanvas = 46;
+                            this.heightcanvas = 50;
+                            
+                            this.ycanvas = 245;                                                          
+                            
+                        }
+                        
+                    }
+                    else  
+                    {      
+                                
+                        this.ximg = 846; 
+                        this.yimg = 0;
+                        this.heightimg = 50;
+                        this.widthimg = 46;   
+                        this.widthcanvas = 46;
+                        this.heightcanvas = 50;
+                    }              
+                    
+                }
+
+                if(this.category == 6 && everyintervalGround(13))
+                {
+                    if(myGameArea.frameNo % 2 == 0)
+                            z = 0;
+                        else
+                            z = 1;
+
+                    this.ximg = 135 + (45 * z);
+                }
+                ctx = myGameArea.context;
+                ctx.drawImage(image, this.ximg, this.yimg, this.widthimg, this.heightimg, 
+                            this.xcanvas, this.ycanvas, this.widthcanvas, this.heightcanvas);
+            }
+
+            this.newPos = function(){
+                this.gravitySpeed += this.gravity;
+                this.xcanvas += this.speedX;
+                this.ycanvas += this.speedY + this.gravitySpeed;
+                this.hitBottom();
+            }
+
+            this.crashWith = function(otherobj){
+                var myleft = this.xcanvas;
+                var myright = this.xcanvas + (this.widthcanvas);
+                var mytop = this.ycanvas;
+                var mybottom = this.ycanvas + (this.heightcanvas);
+
+                var otherleft = otherobj.xcanvas;
+                var otherright = otherobj.xcanvas + (otherobj.widthcanvas);
+                var othertop = otherobj.ycanvas ;
+                var otherbotttom = otherobj.ycanvas + (otherobj.heightcanvas);
+
+                var crash = true;
+                if((mybottom < othertop) || (myright < otherleft) || 
+                    (mytop > otherbotttom) || (myleft > otherright))
+                        crash = false;
+                
+                    return crash;
+            }
+
+            this.hitBottom = function(){
+                    var rockBottom = myGameArea.canvas.height - this.heightcanvas - 5;
+                    if(this.ycanvas > rockBottom){
+                        this.ycanvas = rockBottom;
+
+                        if(myGameArea.key && myGameArea.key == 38  || myGameArea.key == 32)
+                            this.gravitySpeed = -(33 * this.bounce);
+                    }
+                }
+                        
+        }
+
+        function updateGameArea(){
+            
+            var x, y;
+
+            for(i = 0; i < myCactuss.length; i++){
+                if(myDinosaur.crashWith(myCactuss[i]))
+                {
+                    gameover.update();
+                    myGameArea.stop();
+                    //if(myGameArea.key && myGameArea.key == 32)
+                    //{
+                        //myGameArea.clear();
+                        //startGame();
+                    //}
+                    return;
+                }
+            }
+
+            for(i = 0; i < myBirds.length; i++)
+            {
+                if(myDinosaur.crashWith(myBirds[i]))
+                {
+                    gameover.update();
+                    myGameArea.stop();
+                    return;
+                }
+            }
+
+            myGameArea.clear();
+            myGameArea.frameNo += 1;
+            myGameArea.frameCatus += 1;
+            myGameArea.frameBird += 1;
+            
+            
+            if(myGameArea.frameCatus == 1 || everyintervalCatus(randomCactus * 40))
+            {
+                x = myGameArea.canvas.width;
+                y = myGameArea.canvas.height - 55;
+                
+                if(randomCactus == 4)
+                {
+                    myCactuss.push(new component(228, 0, 17, 40, x, y + 10, 17, 40, 2));
+                }
+                else if(randomCactus == 6)        
+                {           
+                    myCactuss.push(new component(332, 0, 25, 50, x, y, 25, 50, 2));
+                }
+                else if(randomCactus == 8)     
+                {            
+                    myCactuss.push(new component(332, 0, 25, 50, x, y, 25, 50, 2));  
+                    myCactuss.push(new component(228, 0, 17, 40, x + 20, y + 10, 17, 40, 2));                   
+                    myCactuss.push(new component(332, 0, 25, 50, x + 30, y, 25, 50, 2));
+                }
+                else
+                {
+                    myCactuss.push(new component(432, 0, 50, 50, x, y, 50, 50, 2));
+                }
+                
+                    randomCactus = Math.floor((Math.random()  * 4) + 2) * 2;                
+      
+            }
+
+            
+
+            if( everyintervalGround(randomCloud * 20))
+            {
+                x = myGameArea.canvas.width;
+                y = myGameArea.canvas.height - 55;
+                
+                myClouds.push(new component(86, 0, 50, 50, x, randomCloud * 40, 70, 70, 4));           
+                randomCloud = Math.floor((Math.random() * 5) + 1);              
+                 
+      
+            }
+
+
+            if(everyintervalBird(randomBird * 60) && randomCactus >=
+             8)
+            {
+                x = myGameArea.canvas.width;
+                y = myGameArea.canvas.height - 80;
+                
+                if(randomBird == 6)
+                    y = 150;
+
+                myBirds.push(new component(135, 5, 45, 30, x, y, 50, 30, 6));
+                randomBird = Math.floor((Math.random()  * 3) + 4) * 2;   
+               
+            }
+
+            if(myGameArea.frameNo == 1 || everyintervalGround(533))
+            {
+                x = myGameArea.canvas.width;
+                y = myGameArea.canvas.height - 20;
+                
+                if(myGameArea.frameNo == 1)
+                    x = 0;
+                myGrounds.push(new component(0, 52, 1200, 30, x, y, 2400, 30, 3));
+                
+            }
+            
+
+            for(i = 0; i < myCactuss.length; i++)
+            {
+                myCactuss[i].xcanvas -= 3;
+                myCactuss[i].update();
+                
+            }
+
+            for(i = 0; i < myGrounds.length; i++)
+            {
+                myGrounds[i].xcanvas -= 3;
+                myGrounds[i].update();
+            }
+
+            for(i = 0; i < myClouds.length; i++)
+            {
+                myClouds[i].xcanvas -= 2;
+                myClouds[i].update();
+            }
+
+            for(i = 0; i < myBirds.length; i++)
+            {
+                myBirds[i].xcanvas -= 5;
+                myBirds[i].update();
+            }
+
+
+            if(everyintervalGround(40))
+            {
+                score++;
+                var donvi = score % 10;
+                var chuc = Math.floor((score % 100) / 10);
+                var tram = Math.floor((score % 1000) / 100);
+                var ngan = Math.floor((score % 10000) / 1000);
+                var chucngan = Math.floor((score % 100000) / 10000);
+                
+                myScore[0].ximg = vtScore[donvi];
+                myScore[1].ximg = vtScore[chuc];
+                myScore[2].ximg = vtScore[tram];
+                myScore[3].ximg = vtScore[ngan];
+                myScore[4].ximg = vtScore[chucngan];
+           
+                    
+            }
+
+            for(i = 0; i < myScore.length; i++)
+            {
+                myScore[i].update();
+            }
+           
+            for(i = 0; i < hightScore.length; i++)
+            {
+                hightScore[i].update();
+            }
+            
+            myDinosaur.newPos();
+            myDinosaur.update();
+      
+        }
+        
+    </script>
+
+    <div id="wrapper">
+        
+
+    </div>
+
+    <img id = "imgmain" src="img/100-offline-sprite.png"/>
+    <button id="btnstart" onclick=""><a href="index.html">start</a></button>
+</body>
+</html>
